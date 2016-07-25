@@ -1,8 +1,8 @@
 /**
- * 
+ *
  */
 
-angular.module('app').service('MapService',
+angular.module(MODULE_NAME).service('MapService',
 		[ '$http', function($http) {
 
 			this.getMarkerByCityName = function(map, name) {
@@ -12,7 +12,7 @@ angular.module('app').service('MapService',
 					return new google.maps.Marker({
 						map : map,
 						position : {
-							
+
 							//Use + to turn string to number
 							lat : +result.data.latitude,
 							lng : +result.data.longitude

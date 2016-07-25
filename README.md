@@ -57,3 +57,9 @@ If there is no possible route, the user must be made aware that they cannot trav
 In the scenario of a multi-flight itinerary, lines must be displayed with a different color for each branch of the journey
 
 Information must be provided on the map template page that shows the user the order the line segments occur in, the flight time for that segment, and the layover time in each particular city
+
+### etc
+
+#### 'extra credit'
+
+add the cook sys icon somewhere reasonable
