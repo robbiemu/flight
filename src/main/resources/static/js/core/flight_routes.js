@@ -1,17 +1,15 @@
 /* globals angular, Res, MODULE_NAME, Routes */
-angular.module(MODULE_NAME).config(['$routeProvider', 'Routes', 'baseRoute',
-    function config ($routeProvider, Routes, baseRoute) {
+angular.module(MODULE_NAME).config(['$routeProvider', 'Routes', 'DomainsDir', 'StylesDir',
+    function config ($routeProvider, Routes, DomainsDir, StylesDir) {
       $routeProvider
         .when('/', {
-          templateUrl: baseRoute + 'home/home_template.html',
-          controller: 'home_controller',
-          resolve: {
-            factory: function (Res) { controllersAndServices(Res, Routes, 'home') }
-          }
+          templateUrl: DomainsDir + 'home/home_template.html',
+          controller: 'HomeController',
+          controllerAs: 'homeController',
         })
 
         .when('/map', {
-          templateUrl: baseRoute + 'map/map_template.html',
+          templateUrl: DomainsDir + 'map/map_template.html',
           controller: 'MapController',
           controllerAs: 'mapController'
         })
@@ -19,15 +17,17 @@ angular.module(MODULE_NAME).config(['$routeProvider', 'Routes', 'baseRoute',
     }
   ])
 
-const controllersAndServices = function (Res, Routes, route_name) {
+const controllersAndServices = function (Res, DomainsDir, StylesDir, Routes, route_name) {
   Res.clean_scripts()
   Res.clean_styles()
+
   if (route_name in Routes) {
     if ('scripts' in Routes[route_name]) {
-      Res.script(Routes[route_name].scripts)
+      Res.script(Routes[route_name].scripts.map((x)=> `${DomainsDir}${x}`))
+
     }
     if ('styles' in Routes[route_name]) {
-      Res.script(Routes[route_name].styles)
+        Res.style(Routes[route_name].styles.map((x)=> `${StylesDir}${x}`))
     }
   }
 }

@@ -1,21 +1,27 @@
 package com.cooksys.component;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.stereotype.Component;
 
 import com.cooksys.pojo.Cities;
 import com.cooksys.pojo.Flight;
+import com.cooksys.pojo.Node;
+import com.cooksys.pojo.Tuple;
+
+import static com.cooksys.Defs.*;
 
 @Component
 public class FlightGenerator {
 
-	public ArrayList<Flight> generateNewFlightList() {
+	public Tuple<LinkedList<Node>, ArrayList<Flight>> generateNewFlightList() {
 		
-		ArrayList<Flight> result = new ArrayList<>();
+		LinkedList<Node> graph = new LinkedList<>();
+		ArrayList<Flight> flights = new ArrayList<>();
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < MAX_FLIGHTS_IN_SCHEDULE; i++) {
 
 			int originIndex = ThreadLocalRandom.current().nextInt(0, 4);
 
@@ -28,12 +34,38 @@ public class FlightGenerator {
 			String destination = Cities.values()[destinationIndex].getName();
 			int flightTime = ThreadLocalRandom.current().nextInt(1, 4);
 			int offset = ThreadLocalRandom.current().nextInt(0, 10);
+			
+			Node no = new Node();
+			no.setName(origin);
+			if (graph.contains(no)) {
+				no = graph.get(graph.indexOf(no));
+			}
+			Node nd = new Node();
+			nd.setName(destination);
+			if (graph.contains(nd)) {
+				nd = graph.get(graph.indexOf(nd));
+			}
+			no.addEdge(new Tuple<Node, Integer>(nd, flightTime + offset));
+			if (graph.contains(no)) {
+				graph.set(graph.indexOf(no), no);
+			} else {
+				graph.add(no);
+			}
+			if (graph.contains(nd)) {
+				graph.set(graph.indexOf(nd), nd);
+			} else {
+				graph.add(nd);
+			}
 
 			Flight f = new Flight(origin, destination, flightTime, offset);
 
-			result.add(f);
+			flights.add(f);
 		}
-		return result;
+		
+//		System.out.println("flights: " + flights);
+//		System.out.println("graph: " + graph);
+		
+		return new Tuple<LinkedList<Node>, ArrayList<Flight>>(graph, flights);
 	}
 
 }
