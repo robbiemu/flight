@@ -34,6 +34,10 @@ public class FlightGenerator {
 			String destination = Cities.values()[destinationIndex].getName();
 			int flightTime = ThreadLocalRandom.current().nextInt(1, 4);
 			int offset = ThreadLocalRandom.current().nextInt(0, 10);
+
+			Flight f = new Flight(origin, destination, flightTime, offset);
+
+			flights.add(f);
 			
 			Node no = new Node();
 			no.setName(origin);
@@ -45,7 +49,42 @@ public class FlightGenerator {
 			if (graph.contains(nd)) {
 				nd = graph.get(graph.indexOf(nd));
 			}
-			no.addEdge(new Tuple<Node, Integer>(nd, flightTime + offset));
+			System.out.println(f + " for origin city: " + no.getName());
+			no.addEdge(f);
+			if (graph.contains(no)) {
+				graph.set(graph.indexOf(no), no);
+			} else {
+				graph.add(no);
+			}
+			if (graph.contains(nd)) {
+				graph.set(graph.indexOf(nd), nd);
+			} else {
+				graph.add(nd);
+			}
+		}
+		
+//		System.out.println("flights: " + flights);
+		System.out.println("graph: " + graph);
+		
+		return new Tuple<LinkedList<Node>, ArrayList<Flight>>(graph, flights);
+	}
+
+	public static LinkedList<Node> graph(ArrayList<Flight> flightList) {
+		LinkedList<Node> graph = new LinkedList<>();
+
+		for(Flight f: flightList) {
+			Node no = new Node();
+			no.setName(f.getOrigin());
+			if (graph.contains(no)) {
+				no = graph.get(graph.indexOf(no));
+			}
+			Node nd = new Node();
+			nd.setName(f.getDestination());
+			if (graph.contains(nd)) {
+				nd = graph.get(graph.indexOf(nd));
+			}
+			System.out.println("adding flight " + f + " for origin city: " + no.getName());
+			no.addEdge(f);
 			if (graph.contains(no)) {
 				graph.set(graph.indexOf(no), no);
 			} else {
@@ -57,15 +96,8 @@ public class FlightGenerator {
 				graph.add(nd);
 			}
 
-			Flight f = new Flight(origin, destination, flightTime, offset);
-
-			flights.add(f);
 		}
-		
-//		System.out.println("flights: " + flights);
-//		System.out.println("graph: " + graph);
-		
-		return new Tuple<LinkedList<Node>, ArrayList<Flight>>(graph, flights);
+		return graph;
 	}
 
 }

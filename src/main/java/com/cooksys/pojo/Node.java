@@ -10,20 +10,20 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper=false)
 public class Node {
 	String name;
-	List<Tuple<Node, Integer>> edges; // destination/child of vertex, flighttime+offset/weight
+	List<Flight> edges; // destination/child of vertex, flighttime+offset/weight
 	
 	public Node(){
 		edges = new ArrayList<>();
 	}
 	
-	public void addEdge(Tuple<Node, Integer> edge) {
+	public void addEdge(Flight edge) {
 		edges.add(edge);
 	}
 
 	public Boolean hasEdgeTo(Node u) {
 		Boolean hasEdgeTo = false;
-		for(Tuple<Node, Integer> edge: edges) {
-			if( edge.getLeft().equals(u)){
+		for(Flight edge: edges) {
+			if(edge.getDestination().equals(u)){
 				hasEdgeTo = true;
 				break;
 			}
@@ -31,16 +31,6 @@ public class Node {
 		return hasEdgeTo;
 	}
 
-	public Integer getDistanceTo(Node u) {
-		for(Tuple<Node, Integer> edge: edges) {
-			if( edge.getLeft().equals(u)){
-				return edge.getRight();
-			}
-		}
-		return null;
-	}
-
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
