@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cooksys.pojo.Flight;
 import com.cooksys.service.FlightService;
 import com.cooksys.service.LocationService;
-import com.cooksys.tx.TXin;
+import com.cooksys.tx.TXbody;
 
 @RestController
 @CrossOrigin(methods = RequestMethod.POST)
@@ -32,7 +32,7 @@ public class FlightsController {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public ArrayList<Flight> processRoute(@RequestBody TXin txin)
+	public ArrayList<Flight> processRoute(@RequestBody TXbody txin)
 	{
 		return flightService.processRoute(txin);
 	}

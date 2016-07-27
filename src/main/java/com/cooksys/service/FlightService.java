@@ -22,7 +22,7 @@ import com.cooksys.component.FlightGenerator;
 import com.cooksys.pojo.Flight;
 import com.cooksys.pojo.Node;
 import com.cooksys.pojo.Tuple;
-import com.cooksys.tx.TXin;
+import com.cooksys.tx.TXbody;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
 import lombok.Data;
@@ -42,7 +42,7 @@ public class FlightService {
 	private LinkedList<Node> graph = new LinkedList<>();
 	
 	//The fixedDelay parameter determines how often a new day is generated as expressed in milliseconds
-	@Scheduled(fixedDelay=5000)
+	@Scheduled(fixedDelay=FLIGHT_GENERATION_DELAY)
 	private void refreshFlights()
 	{
 		Tuple<LinkedList<Node>, ArrayList<Flight>> results = generator.generateNewFlightList();
@@ -60,7 +60,7 @@ public class FlightService {
 	 *  	to, location
 	 */
 	@SuppressWarnings("unchecked")
-	public ArrayList<Flight> processRoute(TXin txin) {
+	public ArrayList<Flight> processRoute(TXbody txin) {
 		String origin = (String) txin.getSettings().get(TX_PROCESSROUTE_ORIGIN);
 		String destination = (String) txin.getSettings().get(TX_PROCESSROUTE_DESTINATION);
 		
@@ -122,7 +122,13 @@ public class FlightService {
 		do {
 			Entry<Node, Long> min = null;
 			for (Entry<Node, Long> entry : distance.entrySet()) {
-			    if (vertices.contains(entry.getKey()) && (min == null || min.getValue() > entry.getValue())) {
+				// if the node is still in the list of unprocessed vertices,
+				// and it is a node stemming from the origin node in our search
+				// and it is the cheapest node in the list.. probably not necessary but..
+			    if (
+			    		vertices.contains(entry.getKey()) && 
+			    		(distance.get(entry.getKey()) != Long.MAX_VALUE) && 
+			    		(min == null || min.getValue() > entry.getValue())) {
 			        min = entry;
 			    }
 			}
@@ -130,6 +136,7 @@ public class FlightService {
 				break;
 			}
 			u = min.getKey();
+			
 			vertices.remove(u);
 			
 			for (Flight edge: u.getEdges()) {
@@ -155,21 +162,21 @@ public class FlightService {
 				
 				if(alt < distance.get(neighbor)) {
 					if ((distance.get(o)==Long.MAX_VALUE? 0:distance.get(o)) < edge.getOffset()){
-						//System.out.println("Using ["+alt+":"+(distance.get(neighbor)==Long.MAX_VALUE? 0:distance.get(neighbor))+", "+
-					//			edge.getOffset()+":"+distance.get(o)+
-					//			"] shortening distance weight for " + neighbor);				
+//						System.out.println("Using ["+alt+":"+(distance.get(neighbor)==Long.MAX_VALUE? 0:distance.get(neighbor))+", "+
+//								edge.getOffset()+":"+distance.get(o)+
+//								"] shortening distance weight for " + neighbor);				
 						distance.put(neighbor, alt);
-						//System.out.println("[distances] " + distance);
+//						System.out.println("[distances] " + distance);
 						
 						Node n = neighbor;
 						List<Object> lo = p2.stream().filter((x) -> ((Node) x.get(1)).equals(n)).collect(Collectors.toList());
 						if (lo == null || lo.isEmpty()) {
 							lo = new ArrayList<>();
 							lo.add(u); lo.add(neighbor); lo.add(edge);
-							//System.out.println("adding new pathing entry for " + lo);
+							System.out.println("adding new pathing entry for " + lo);
 							p2.add(lo);							
 						} else {
-							//System.out.println("updating pathing entry for " + lo);
+							System.out.println("updating pathing entry for " + lo);
 							lo = (List<Object>) lo.get(0);
 							p2.remove(lo);
 							lo.set(0, u);
