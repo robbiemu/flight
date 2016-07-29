@@ -10,5 +10,5 @@ import com.cooksys.entity.User;
 
 @Repository
 public interface ItineraryRepository extends JpaRepository<Itinerary, Long> {
-	List<Itinerary> findByUser(User u);
+	List<Itinerary> findByUserOrderByIdDesc(User u); 
 }

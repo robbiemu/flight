@@ -13,6 +13,9 @@ angular.module(MODULE_NAME).factory('Auth', function () {
         },
         getId : function () {
             return (user)? user.id: ''
+        },
+        getUser : function () {
+            return (user)? user: {}
         }
     }
 })

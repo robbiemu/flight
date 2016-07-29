@@ -1,0 +1,54 @@
+#user > *:not(#home_nav) {
+    margin: 0 3vw;
+}
+
+#itinerary_map {
+    width: 45vw;
+    height: 85vh;
+
+    position: fixed !important; // ugly hack around google's malicious code
+    right: 0; // google also unsets this so even !important doesn't work
+    top: 4em;
+    border-radius: 0.3em;
+    border: solid var(--festival-yellow);
+}
+
+#div > *:not(#map) {
+    max-width: 66vw;
+}
+
+#home_nav { clear: both; }
+
+h2 {
+    font-size: 200%;
+    margin-bottom: 1em;
+}
+
+h4, h5, h6 {
+    font-size: 150%;
+}
+
+.inline {
+    display: inline;
+}
+
+.select_itinerary > input {
+    vertical-align: middle;
+    margin-top: -0.5em;
+}
+
+#user > .itineraries:not(#home_nav) {
+    max-width: 45vw;
+    border-radius: 0.4em;
+    border: solid thin var(--festival-yellow);
+    background-color: rgb(250, 250, 250);
+    padding: 1em;
+    margin-top: 1em;
+}
+
+#current_flights > li {
+    border-radius: 0.3em;
+    border: solid thin rgb(240, 240, 240);
+    background-color: white;
+    padding: 0.5em;
+}

@@ -1,16 +1,20 @@
-<div id="home">
+<div id="user">
     <ul id="home_nav" class="navbar">
         <li><a href="#/" class="nav">home</a></li>
-        <li><a href="#/map" class="nav">map</a></li>
     </ul>
+    <div id="itinerary_map"></div>
     <h2>Itineraries</h2>
-    <div id="itineraries" ng-repeat="itinerary in itineraries">
-            <h4>Scheduled Itinerary</h4>
+    <div class="itineraries" ng-repeat="itinerary in itineraries">
+        <label class="select_itinerary radio-inline">
+            <input name="itineraryGroup" id="itinerary_{{$index}}" value="{{$index}}" ng-model="selected_itinerary.index" ng-change="renderMap()" type="radio">
+        </label>
+            <h4 class="inline">Scheduled Itinerary</h4>
             <ul class="itinerary" ng-repeat="flight in itinerary.flights">
                 <li class="itinerary flight">
-                    <h6>{{flight.origin}} - {{flight.destination}}</h6>
+                    <h6><span class="glyphicon glyphicon-map-marker flight_{{flight.id}} flight" aria-hidden="true"></span> {{flight.origin}} - {{flight.destination}}</h6>
                     <p>Leaves: {{flight.offset}} Arrives: {{flight.offset + flight.flightTime}}</p>
                 </li>
+                <li><h3 ng-if="flight.layover">Layover time {{flight.layover}}</h3></li>
             </ul>
             <div class="itinerary itinerary_totals"><ul>
                 <li><large>Total Flight Time</large> {{itinerary.totals.flightTime}}</li>

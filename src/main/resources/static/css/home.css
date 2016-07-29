@@ -1,0 +1,40 @@
+#home {
+    padding-bottom: 5vh;
+}
+
+#flights_map {
+    width: 40vw;
+    height: 50vw;
+    position: fixed !important; // ugly hack around google's malicious code
+}
+
+#map, #flights_map {
+    max-width: 40vw;
+    max-height: 50vw;
+    border-radius: 0.3em;
+    border: solid var(--festival-yellow);
+    margin-top: 2em;
+}
+
+#map {
+    width: 50vw;
+    height: 50vh;
+    float:right;
+}
+
+
+#current_flights_container, #user_booking, #shortest_route_container, #no_such_route {
+    max-width: 45vw;
+    border-radius: 0.4em;
+    border: solid thin var(--festival-yellow);
+    background-color: rgb(250, 250, 250);
+    padding: 1em;
+    margin-top: 1em !important;
+}
+
+#current_flights > li {
+    border-radius: 0.3em;
+    border: solid thin rgb(240, 240, 240);
+    background-color: white;
+    padding: 0.5em;
+}

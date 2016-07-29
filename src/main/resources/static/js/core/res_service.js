@@ -45,8 +45,8 @@ angular.module(MODULE_NAME).service('Res', ['$rootScope', function ($rootScope) 
         removables.push(key)
       }
 
-      scope._styles.filter((v, i) => { removables.indexOf(i) })
-      scope._rawStyles.filter((v, i) => { removables.indexOf(i) })
+      scope._styles = scope._styles.filter((v, i) => { removables.indexOf(i) })
+      scope._rawStyles = scope._rawStyles.filter((v, i) => { removables.indexOf(i) })
     },
 
     script: function (inp) {
@@ -84,8 +84,8 @@ angular.module(MODULE_NAME).service('Res', ['$rootScope', function ($rootScope) 
         removables.push(key)
       }
 
-      scope._scripts.filter((v, i) => { removables.indexOf(i) })
-      scope._rawScripts.filter((v, i) => { removables.indexOf(i) })
+      scope._scripts = scope._scripts.filter((v, i) => { removables.indexOf(i) })
+      scope._rawScripts = scope._rawScripts.filter((v, i) => { removables.indexOf(i) })
     }
 
   }

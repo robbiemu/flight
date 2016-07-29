@@ -120,30 +120,25 @@ public class FlightService {
 		distance.put(ns, 0L);
 		Node u = null;
 		do {
-			Entry<Node, Long> min = null;
+			Entry<Node, Long> validNode = null;
 			for (Entry<Node, Long> entry : distance.entrySet()) {
 				// if the node is still in the list of unprocessed vertices,
 				// and it is a node stemming from the origin node in our search
-				// and it is the cheapest node in the list.. probably not necessary but..
-			    if (
-			    		vertices.contains(entry.getKey()) && 
-			    		(distance.get(entry.getKey()) != Long.MAX_VALUE) && 
-			    		(min == null || min.getValue() > entry.getValue())) {
-			        min = entry;
+			    if (vertices.contains(entry.getKey()) && (distance.get(entry.getKey()) != Long.MAX_VALUE)) {
+			        validNode = entry;
 			    }
 			}
-			if(min == null) {
+			if(validNode == null) {
 				break;
 			}
-			u = min.getKey();
+			u = validNode.getKey();
 			
 			vertices.remove(u);
 			
+			// looking at each flight from this valid node
 			for (Flight edge: u.getEdges()) {
-				System.out.println("-- considering flight " + edge + " from city " + u.getName());
 				
-				Long alt = edge.getOffset() + edge.getFlightTime();
-
+				// get the distance-node of the next node along the flight path
 				Node neighbor = null;
 				for(Entry<Node, Long> e : distance.entrySet()) {
 					if(e.getKey().getName().equals(edge.getDestination())) {
@@ -152,6 +147,7 @@ public class FlightService {
 					}
 				}
 				
+				// and the distance node of the flight origin
 				Node o = null;
 				for(Entry<Node, Long> e : distance.entrySet()) {
 					if(e.getKey().getName().equals(edge.getOrigin())) {
@@ -159,37 +155,27 @@ public class FlightService {
 						break;
 					}
 				}
+
+//				System.out.println("-- considering flight " + edge + " from city " + u.getName());
+				Long alt = edge.getOffset() + edge.getFlightTime();
 				
 				if(alt < distance.get(neighbor)) {
-					if ((distance.get(o)==Long.MAX_VALUE? 0:distance.get(o)) < edge.getOffset()){
-//						System.out.println("Using ["+alt+":"+(distance.get(neighbor)==Long.MAX_VALUE? 0:distance.get(neighbor))+", "+
-//								edge.getOffset()+":"+distance.get(o)+
-//								"] shortening distance weight for " + neighbor);				
+					if ((o.equals(ns)) || ((distance.get(o)==Long.MAX_VALUE? 0:distance.get(o)) < edge.getOffset())){
+						System.out.println("Using ["+alt+":"+(distance.get(neighbor)==Long.MAX_VALUE? 0:distance.get(neighbor))+", "+
+								edge.getOffset()+":"+distance.get(o)+
+								"] shortening distance weight for " + neighbor);				
 						distance.put(neighbor, alt);
-//						System.out.println("[distances] " + distance);
+						System.out.println("[distances] " + distance);
 						
-						Node n = neighbor;
-						List<Object> lo = p2.stream().filter((x) -> ((Node) x.get(1)).equals(n)).collect(Collectors.toList());
-						if (lo == null || lo.isEmpty()) {
-							lo = new ArrayList<>();
-							lo.add(u); lo.add(neighbor); lo.add(edge);
-							System.out.println("adding new pathing entry for " + lo);
-							p2.add(lo);							
-						} else {
-							System.out.println("updating pathing entry for " + lo);
-							lo = (List<Object>) lo.get(0);
-							p2.remove(lo);
-							lo.set(0, u);
-							lo.set(2, edge);
-							
-							//System.out.println("updating pathing entry for " + lo);
-							p2.add(lo);
-						}
+						List<Object> lo = new ArrayList<>();
+						lo.add(u); lo.add(neighbor); lo.add(edge);
+//						System.out.println("adding new pathing entry for " + lo);
+						p2.add(lo);							
 					} else {
-						//System.out.println("Ignoring ["+edge.getOffset()+":"+(distance.get(o)==Long.MAX_VALUE? 0:distance.get(o))+"] leaves too early to " + neighbor.getName());						
+//						System.out.println("Ignoring ["+edge.getOffset()+":"+(distance.get(o)==Long.MAX_VALUE? 0:distance.get(o))+"] leaves too early to " + neighbor.getName());						
 					}
 				} else {
-					//System.out.println("Ignoring ["+alt+":"+distance.get(neighbor)+"] found a less cheap path to " + neighbor.getName());
+//			s		System.out.println("Ignoring ["+alt+":"+distance.get(neighbor)+"] found a less cheap path to " + neighbor.getName());
 				}
 			}
 			
@@ -218,7 +204,19 @@ public class FlightService {
 				// no path to destination
 				return new ArrayList<>();
 			} else {
-				lo = (List<Object>) lo.get(0);
+				Flight f = null;
+				Long weight = Long.MAX_VALUE;
+				Map<Flight, List<Object>> mflo = new HashMap<>();
+				for(Object o: lo) {
+					List<Object> ilo = (List<Object>) o;
+					Flight sf = (Flight) ilo.get(2);
+					if((f == null) || (sf.getFlightTime() + sf.getOffset() < weight)) {
+						f = sf;
+						weight = f.getOffset()+f.getFlightTime();
+						mflo.put(f, ilo);
+					}
+				}
+				lo = mflo.get(f);
 			}
 			
 			path.add((Flight)lo.get(2));

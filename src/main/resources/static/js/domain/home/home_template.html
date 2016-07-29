@@ -2,9 +2,9 @@
   <ul id="home_nav" class="navbar">
     <li><a href="#/" class="nav">home</a></li>
     <li><a href="#/{{homeController.user_link.href}}" class="nav">{{homeController.user_link.inner}}</a></li>
-    <li><a href="#/map" class="nav">map</a></li>
   </ul>
   <div id="current_flights_container">
+    <h2>Daily Flights</h2>
     <ul id="current_flights" class="flights" ng-repeat="flight in flights">
       <li class="flight flights">
         <h6>{{flight.origin}} - {{flight.destination}}</h6>
@@ -12,13 +12,22 @@
       </li>
     </ul>
   </div>
+  <div id="flights_map"></div>
   <div id="user_booking">
     <h3>Booking a flight</h3>
+    <div id="successful_booking" class="booking_status">
+      <h3><i>booking success</i></h3>
+      {{message}}
+    </div>
+    <div id="unsuccessful_booking" class="booking_status">
+      <h3>Problem booking your itinerary</h3>
+      {{message}}
+    </div>
     <form id="live_booking">
-      <select name="origin" ng-model="find_route.origin">
+      <select name="origin" ng-model="find_route.origin" ng-change="changed_flight()">
         <option value="{{city}}" ng-repeat="city in cities">{{city}}</option>
       </select>
-      <select name="destination" ng-model="find_route.destination">
+      <select name="destination" ng-model="find_route.destination" ng-change="changed_flight()">
         <option value="{{city}}" ng-repeat="city in cities">{{city}}</option>
       </select>
     </form>
@@ -31,6 +40,8 @@
       </li>
     </ul>
     <button name="book" class="btn btn-success" ng-click="book_itinerary()">Book this itinerary</button>
+    <div id="map"></div>
+    <div style="clear:both">&nbsp;</div>
   </div>
   <div id="no_such_route">
     <h3>No route available</h3>
